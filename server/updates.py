@@ -233,13 +233,17 @@ def update_restart():
     pid = os.getpid()
     if os.name == 'nt':
         if FROZEN:
+            # (ping is the pause: `timeout` refuses to run without a console window)
+            # the packaged app is two processes (a small launcher, then Opia); the file stays locked until both have gone
             new, exe = os.path.join(WORK, 'Opia.exe'), sys.executable
-            swap = 'move /y "%s" "%s" >nul\r\nstart "" "%s"\r\n' % (new, exe, exe)
+            swap = (':wait2\r\ntasklist /FI "PID eq %d" 2>nul | find "%d" >nul && (ping -n 2 127.0.0.1 >nul & goto wait2)\r\n'
+                    'set n=0\r\n:swap\r\nmove /y "%s" "%s" >nul 2>nul && goto moved\r\nset /a n+=1\r\nif %%n%% geq 15 goto moved\r\n'
+                    'ping -n 2 127.0.0.1 >nul\r\ngoto swap\r\n:moved\r\nstart "" "%s"\r\n') % (os.getppid(), os.getppid(), new, exe, exe)
         else:
             swap = 'start "" "%s" "%s"\r\n' % (os.path.join(os.path.dirname(sys.executable), 'pythonw.exe') if os.path.exists(os.path.join(os.path.dirname(sys.executable), 'pythonw.exe')) else sys.executable, os.path.join(APP_DIR, 'run.py'))
         bat = os.path.join(WORK, 'restart.bat')
         with open(bat, 'w', encoding='utf-8') as f:
-            f.write('@echo off\r\n:wait\r\ntasklist /FI "PID eq %d" 2>nul | find "%d" >nul && (timeout /t 1 /nobreak >nul & goto wait)\r\n%sdel "%%~f0"\r\n' % (pid, pid, swap))
+            f.write('@echo off\r\n:wait\r\ntasklist /FI "PID eq %d" 2>nul | find "%d" >nul && (ping -n 2 127.0.0.1 >nul & goto wait)\r\n%sdel "%%~f0"\r\n' % (pid, pid, swap))
         subprocess.Popen(['cmd', '/c', bat], creationflags=HIDDEN | getattr(subprocess, 'DETACHED_PROCESS', 0), close_fds=True)
     else:
         subprocess.Popen(['sh', '-c', 'while kill -0 %d 2>/dev/null; do sleep 1; done; exec "%s" "%s"' % (pid, sys.executable, os.path.join(APP_DIR, 'run.py'))], start_new_session=True)

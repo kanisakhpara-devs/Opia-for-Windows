@@ -38,6 +38,14 @@ Work done in a cloud session (no access to the Windows PC) says so: those change
 - **The exe swap and the restart script.** They are Windows-only, and there was no exe release to update from yet. The first Windows build runs on GitHub after this push.
 - **Spanish:** the wizard's Spanish text is in place but wasn't checked on screen.
 
+**First Windows build:** the workflow built Opia.exe (167 MB). The smoke test started it on Windows, and it answered as the packaged app, version 1.0.3. It was published as release **v1.0.3**.
+
+**Fixed after reading the build log:**
+- **The restart script now waits for both of the exe's processes.** The packaged exe runs as two (a small launcher, then Opia), and the file stays locked until both have gone. If swapping the file still fails, it retries for 15 seconds.
+- **Its pauses use `ping`.** Windows' `timeout` refuses to run without a console window, which would have turned the waiting into a busy loop.
+
+**Changed:** the website's "Download for Windows" button and the README now link straight to Opia.exe, and they explain Windows' "protected your PC" warning (the exe isn't code-signed).
+
 ## Opia for Windows, and Opia for Android moves out (cloud session, 2026-10-18)
 
 **Renamed** this project to **Opia for Windows**: in the README's title and introduction, and on the website's title, hero, download ticket and footer (in English and Spanish). The links now point to `github.com/kanisakhpara-devs/Opia-for-Windows` and `kanisakhpara-devs.github.io/Opia-for-Windows`. GitHub repository names can't contain spaces, so the repository itself is to be named `Opia-for-Windows`; that rename is done in the repository's settings.

@@ -107,7 +107,9 @@ Read, fill in, sign and rearrange PDFs.
 
 ## 🚀 Get started
 
-**On Windows:** double-click `Opia.bat`, or run
+**Easiest:** download **[Opia.exe](https://github.com/kanisakhpara-devs/Opia-for-Windows/releases/latest/download/Opia.exe)** (about 170 MB) and double-click it; there's nothing to install. It isn't code-signed yet, so Windows may say it protected your PC: click **More info**, then **Run anyway**. After that, **Help → Check for Updates…** keeps it current.
+
+**From source on Windows:** `pip install -r requirements.txt`, then double-click `Opia.bat`, or run
 
 ```bash
 python run.py
