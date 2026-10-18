@@ -2,6 +2,8 @@
   <img src="docs/readme/banner.png" alt="Opia: photos, pictures, video, music and PDFs in one app, all on your computer" width="100%">
 </p>
 
+<h1 align="center">Opia for Windows</h1>
+
 <p align="center">
   <img alt="Windows" src="https://img.shields.io/badge/Windows-10%20%7C%2011-0E0E10?style=for-the-badge&logo=windows&logoColor=F4F1EA">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3D5AFE?style=for-the-badge&logo=python&logoColor=white">
@@ -16,14 +18,14 @@
   <a href="#-groove"><b>Groove</b></a> ·
   <a href="#-folio"><b>Folio</b></a> ·
   <a href="#-get-started"><b>Get started</b></a> ·
-  <a href="mobile/README.md"><b>Android</b></a> ·
-  <a href="https://kanisakhpara-devs.github.io/Opia/"><b>Website</b></a> ·
+  <a href="https://kanisakhpara-devs.github.io/Opia-for-Windows/"><b>Website</b></a> ·
+  <a href="https://github.com/kanisakhpara-devs/Opia-for-Android"><b>Opia for Android</b></a> ·
   <a href="CHANGELOG.md"><b>Changelog</b></a>
 </p>
 
 ---
 
-**Opia** is a desktop app for the things you make, in five workspaces: **Lens** (a photo organiser and raw-style editor), **Imagine** (a layered picture editor), **Motion** (a video editor), **Groove** (a music studio) and **Folio** (a PDF editor). You switch between them with one click. Everything runs on your own computer: no account, no uploads, no subscription. A Python engine handles the files, catalogs, colour management and exports. The interface draws every photo edit on the graphics card (WebGL 2).
+**Opia for Windows** is a desktop app for the things you make, in five workspaces: **Lens** (a photo organiser and raw-style editor), **Imagine** (a layered picture editor), **Motion** (a video editor), **Groove** (a music studio) and **Folio** (a PDF editor). You switch between them with one click. Everything runs on your own computer: no account, no uploads, no subscription. A Python engine handles the files, catalogs, colour management and exports. The interface draws every photo edit on the graphics card (WebGL 2).
 
 Every workspace has a **Beginner** mode that shows the essentials in bigger controls, and an **Advanced** mode with every panel and tool. Opia also comes in four themes, in English and Spanish, and has trackpad-friendly controls.
 
@@ -113,7 +115,7 @@ python run.py
 
 Opia opens in its own window. Closing the window stops it and, if one is due, backs up your catalog.
 
-**On an Android phone:** there is a phone version with Lens, Imagine, Folio and Groove, made for touch. Open [Opia.apk](https://github.com/kanisakhpara-devs/Opia/releases/download/android/Opia.apk) on the phone to install it (Android 10 or newer). What it does, and what it does not do yet, is in [mobile/README.md](mobile/README.md).
+**On an Android phone:** there's **[Opia for Android](https://github.com/kanisakhpara-devs/Opia-for-Android)**, with Lens, Imagine, Folio and Groove made for touch. It has its own repository and [website](https://kanisakhpara-devs.github.io/Opia-for-Android/), and you install it by opening [Opia.apk](https://github.com/kanisakhpara-devs/Opia-for-Android/releases/latest/download/Opia.apk) on the phone.
 
 <details>
 <summary><b>Requirements and options</b></summary>

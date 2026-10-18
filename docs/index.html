@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Opia: make things, keep them yours</title>
+<title>Opia for Windows: make things, keep them yours</title>
 <meta name="description" content="Opia is a free desktop app with five workspaces: Lens for photos, Imagine for pictures, Motion for video, Groove for music and Folio for PDFs. Everything stays on your computer.">
-<meta property="og:title" content="Opia">
+<meta property="og:title" content="Opia for Windows">
 <meta property="og:description" content="Make things. Keep them yours. Photos, pictures, video, music and PDFs in one desktop app.">
 <meta property="og:image" content="readme/banner.png">
 <meta name="theme-color" content="#efe8da">
@@ -19,7 +19,7 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
 <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
 <header class="top">
-  <a class="brand" href="#top" aria-label="Opia, back to the top"><img src="assets/opia-icon.svg" alt="" width="28" height="28"><span>opia</span></a>
+  <a class="brand" href="#top" aria-label="Opia for Windows, back to the top"><img src="assets/opia-icon.svg" alt="" width="28" height="28"><span>opia</span></a>
   <nav class="links" aria-label="Sections">
     <a href="#workspaces" data-i18n="nav.ws">Workspaces</a>
     <a href="#private" data-i18n="nav.private">Privacy</a>
@@ -39,11 +39,12 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
   <!-- the desk -->
   <section class="hero" id="top">
     <div class="hero-copy">
+      <p class="kicker plain" data-i18n="hero.k">Opia for Windows</p>
       <h1 data-i18n="hero.title">Make things.<br>Keep them yours<span class="dot" aria-hidden="true"></span></h1>
       <p class="sub" data-i18n="hero.sub">Opia is one desktop app for your photos, pictures, videos, songs and PDFs. No account, no cloud: it all stays on your desk.</p>
       <div class="cta">
         <a class="pill ink big" href="#download" data-i18n="hero.download">Download for Windows</a>
-        <a class="pill big" href="https://github.com/kanisakhpara-devs/Opia" data-i18n="hero.github">View on GitHub</a>
+        <a class="pill big" href="https://github.com/kanisakhpara-devs/Opia-for-Windows" data-i18n="hero.github">View on GitHub</a>
       </div>
       <p class="note hand write" data-i18n="hero.note">↓ five workspaces, one app</p>
     </div>
@@ -178,13 +179,14 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
       <span class="pin" aria-hidden="true"></span>
       <h2 id="h-new" class="hand" data-i18n="n.h">What's new</h2>
       <ol>
+        <li><b>Opia for Android</b> <span data-i18n="n6">Lens, Imagine, Folio and Groove on your phone, made for touch. <a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Have a look →</a></span></li>
         <li><b>Imagine</b> <span data-i18n="n1">a layered picture editor, with selections, text, adjustments and filters.</span></li>
         <li><b>Motion</b> <span data-i18n="n2">a timeline video editor with titles and crossfades that exports MP4.</span></li>
         <li><b>Groove</b> <span data-i18n="n3">drop sound files on the timeline where you want them; drag clips between tracks.</span></li>
         <li><b data-i18n="n4.t">Accessibility</b> <span data-i18n="n4">keyboard access to everything, screen reader names, stronger contrast.</span></li>
         <li><b data-i18n="n5.t">New names</b> <span data-i18n="n5">Lens, Imagine, Motion, Groove and Folio.</span></li>
       </ol>
-      <a class="hand more" href="https://github.com/kanisakhpara-devs/Opia/blob/main/CHANGELOG.md" data-i18n="n.more">the full changelog →</a>
+      <a class="hand more" href="https://github.com/kanisakhpara-devs/Opia-for-Windows/blob/main/CHANGELOG.md" data-i18n="n.more">the full changelog →</a>
     </div>
   </section>
 
@@ -207,12 +209,12 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
     <div class="ticket settle" style="--r:.6deg">
       <div class="stub" aria-hidden="true"><img src="assets/opia-icon.svg" alt="" width="70" height="70"><span>ADMIT ONE</span></div>
       <div class="main">
-        <h2 id="h-dl" data-i18n="d.h">Get Opia</h2>
+        <h2 id="h-dl" data-i18n="d.h">Get Opia for Windows</h2>
         <p data-i18n="d.p">Free, for Windows 10 and 11.</p>
-        <a class="pill ink big" href="https://github.com/kanisakhpara-devs/Opia/releases" data-i18n="d.btn">Download for Windows</a>
-        <p class="small" data-i18n="d.note">The ready-to-run app goes on the Releases page. If there isn't one there yet, run it from source:</p>
-        <div class="code"><pre tabindex="0" aria-label="Commands to run Opia from source"><code>git clone https://github.com/kanisakhpara-devs/Opia
-cd Opia
+        <a class="pill ink big" href="https://github.com/kanisakhpara-devs/Opia-for-Windows/releases" data-i18n="d.btn">Download for Windows</a>
+        <p class="small" data-i18n="d.note">The ready-to-run app goes on the Releases page. If there isn't one there yet, run it from source. On a phone? Try <a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Opia for Android</a>.</p>
+        <div class="code"><pre tabindex="0" aria-label="Commands to run Opia from source"><code>git clone https://github.com/kanisakhpara-devs/Opia-for-Windows
+cd Opia-for-Windows
 pip install Pillow numpy opencv-python-headless rawpy exifread soundfile pywebview pillow-heif pypdf pypdfium2 cryptography imageio-ffmpeg
 python run.py</code></pre><button type="button" class="copy" data-i18n="d.copy">Copy</button></div>
       </div>
@@ -222,8 +224,8 @@ python run.py</code></pre><button type="button" class="copy" data-i18n="d.copy">
 
 <footer class="foot">
   <div class="colophon">
-    <div><a class="brand" href="#top"><img src="assets/opia-icon.svg" alt="" width="24" height="24"><span>opia</span></a><p data-i18n="ft.p">Make things. Keep them yours.</p></div>
-    <div class="flinks"><a href="https://github.com/kanisakhpara-devs/Opia">GitHub</a><a href="https://github.com/kanisakhpara-devs/Opia#readme">README</a><a href="https://github.com/kanisakhpara-devs/Opia/blob/main/CHANGELOG.md" data-i18n="ft.changelog">Changelog</a><a href="https://github.com/kanisakhpara-devs/Opia/releases" data-i18n="ft.releases">Releases</a></div>
+    <div><a class="brand" href="#top"><img src="assets/opia-icon.svg" alt="" width="24" height="24"><span>opia</span></a><p data-i18n="ft.p">Opia for Windows. Make things. Keep them yours.</p></div>
+    <div class="flinks"><a href="https://github.com/kanisakhpara-devs/Opia-for-Windows">GitHub</a><a href="https://github.com/kanisakhpara-devs/Opia-for-Windows#readme">README</a><a href="https://github.com/kanisakhpara-devs/Opia-for-Windows/blob/main/CHANGELOG.md" data-i18n="ft.changelog">Changelog</a><a href="https://github.com/kanisakhpara-devs/Opia-for-Windows/releases" data-i18n="ft.releases">Releases</a><a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Opia for Android</a></div>
     <div class="credits">
       <p data-i18n="ft.c1">Motion uses FFmpeg from the imageio-ffmpeg package (BSD-2-Clause). The ffmpeg program inside it is usually a GPL build; if you pass the app on with it inside, the GPL applies to that part.</p>
       <p data-i18n="ft.c2">Instrument samples: Fluid R3 GM SoundFont, CC BY 3.0. Typefaces: Nunito and Caveat, SIL Open Font License. PDF tools: pypdf and pypdfium2.</p>

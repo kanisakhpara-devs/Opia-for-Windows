@@ -3,6 +3,16 @@
 Every change to Opia is listed here, newest first, with what was tested and what was not.
 Work done in a cloud session (no access to the Windows PC) says so: those changes were tested in headless Chromium on Linux, not in the packaged `Opia.exe` window.
 
+## Opia for Windows, and Opia for Android moves out (cloud session, 2026-10-18)
+
+**Renamed** this project to **Opia for Windows**: in the README's title and introduction, and on the website's title, hero, download ticket and footer (in English and Spanish). The links now point to `github.com/kanisakhpara-devs/Opia-for-Windows` and `kanisakhpara-devs.github.io/Opia-for-Windows`. GitHub repository names can't contain spaces, so the repository itself is to be named `Opia-for-Windows`; that rename is done in the repository's settings.
+
+**Moved** the Android app (`mobile/` and `.github/workflows/android.yml`) to its own repository, **[Opia for Android](https://github.com/kanisakhpara-devs/Opia-for-Android)**, with its own README, website and releases. The changes to it since the entry below are in that repository's changelog. This README, the website's "What's new" and its download ticket link to it.
+
+**Left as it was:** the XMP namespace in `server/xmp.py` (`https://github.com/kanisakhpara-devs/Opia/ns/1.0/`). It names Opia's tags inside photo sidecar files, rather than being a link, so changing it would stop Opia reading tags it has already written. The old *android* release in this repository stays until it is deleted by hand; newer builds are only in Opia for Android.
+
+**Tested** (headless Chromium): the website in light/English and dark/Spanish, with no accessibility violations, no sideways scrolling on phones and no script errors.
+
 ## Opia for Android (cloud session, 2026-10-18)
 
 **Added** `mobile/`, a phone version of Opia built for touch, with four workspaces. You chose "phone-first" over squeezing in the desktop app or making a remote control for the PC. Everything runs on the phone, and the app has no internet permission.

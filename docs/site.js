@@ -10,7 +10,7 @@ const html = document.documentElement;
 /* ---- Spanish; the page is written in English */
 const ES = {
   skip: 'Saltar al contenido', 'nav.ws': 'Espacios', 'nav.private': 'Privacidad', 'nav.new': 'Novedades', 'nav.faq': 'Preguntas', 'nav.download': 'Descargar',
-  'hero.title': 'Crea cosas.<br>Que sigan siendo tuyas<span class="dot" aria-hidden="true"></span>',
+  'hero.k': 'Opia para Windows', 'hero.title': 'Crea cosas.<br>Que sigan siendo tuyas<span class="dot" aria-hidden="true"></span>',
   'hero.sub': 'Opia es una app de escritorio para tus fotos, imágenes, vídeos, canciones y PDF. Sin cuenta y sin nube: todo se queda en tu mesa.',
   'hero.download': 'Descargar para Windows', 'hero.github': 'Ver en GitHub', 'hero.note': '↓ cinco espacios, una app',
   'hero.c1': 'Lens · todo el viaje, ordenado', 'hero.c2': 'Imagine · portada', 'hero.c3': 'Motion · 28 segundos de Islandia', 'hero.c4': 'Groove · una banda sonora',
@@ -38,7 +38,7 @@ const ES = {
   'p.m': 'sin registro · sin suscripción · sin conexión',
   'n.h': 'Novedades', n1: 'un editor de imágenes por capas, con selecciones, texto, ajustes y filtros.', n2: 'un editor de vídeo con línea de tiempo, títulos y fundidos que exporta MP4.',
   n3: 'suelta archivos de sonido en la línea de tiempo donde quieras; arrastra clips entre pistas.', 'n4.t': 'Accesibilidad', n4: 'todo accesible con el teclado, nombres para lectores de pantalla, más contraste.',
-  'n5.t': 'Nombres nuevos', n5: 'Lens, Imagine, Motion, Groove y Folio.', 'n.more': 'el registro de cambios completo →',
+  n6: 'Lens, Imagine, Folio y Groove en tu teléfono, hechos para el tacto. <a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Échale un vistazo →</a>', 'n5.t': 'Nombres nuevos', n5: 'Lens, Imagine, Motion, Groove y Folio.', 'n.more': 'el registro de cambios completo →',
   'q.h': 'Preguntas, con respuestas sinceras.',
   q1: '¿Es gratis?', a1: 'Sí. No hay nada que pagar ni cuenta que crear. El proyecto aún no ha elegido una licencia de código abierto, así que por ahora el código se comparte para verlo y ejecutarlo, no para reutilizarlo.',
   q2: '¿Funciona sin conexión?', a2: 'Sí. Todo se ejecuta en tu ordenador. Solo el mapa de Lens necesita internet, para descargar los mosaicos.',
@@ -46,9 +46,9 @@ const ES = {
   q4: '¿Puede abrir mi catálogo de Lightroom?', a4: 'No. Lens tiene su propio formato de catálogo. Lee archivos XMP, así que las valoraciones, palabras clave y ajustes guardados así se conservan.',
   q5: '¿Cambiará mis archivos originales?', a5: 'No. Los ajustes se guardan aparte, e Imagine, Motion y Folio guardan archivos nuevos. Tus originales solo se sobrescriben si decides guardar encima.',
   q6: '¿Qué no puede hacer?', a6: 'La edición de fotos es de 8 bits, Imagine no admite PSD ni máscaras de capa, Motion no cambia la velocidad ni usa fotogramas clave, y Folio no reescribe el texto de un PDF ni lee escaneos. El README enumera todos los límites.',
-  'd.h': 'Consigue Opia', 'd.p': 'Gratis, para Windows 10 y 11.', 'd.btn': 'Descargar para Windows',
-  'd.note': 'La app lista para usar se publica en la página de versiones (Releases). Si todavía no hay ninguna, ejecútala desde el código:', 'd.copy': 'Copiar', 'd.copied': 'Copiado',
-  'ft.p': 'Crea cosas. Que sigan siendo tuyas.', 'ft.changelog': 'Registro de cambios', 'ft.releases': 'Versiones',
+  'd.h': 'Consigue Opia para Windows', 'd.p': 'Gratis, para Windows 10 y 11.', 'd.btn': 'Descargar para Windows',
+  'd.note': 'La app lista para usar se publica en la página de versiones (Releases). Si todavía no hay ninguna, ejecútala desde el código. ¿En el teléfono? Prueba <a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Opia para Android</a>.', 'd.copy': 'Copiar', 'd.copied': 'Copiado',
+  'ft.p': 'Opia para Windows. Crea cosas. Que sigan siendo tuyas.', 'ft.changelog': 'Registro de cambios', 'ft.releases': 'Versiones',
   'ft.c1': 'Motion usa FFmpeg del paquete imageio-ffmpeg (BSD-2-Clause). El programa ffmpeg que incluye suele ser una versión GPL; si compartes la app con él dentro, la GPL se aplica a esa parte.',
   'ft.c2': 'Muestras de instrumentos: SoundFont Fluid R3 GM, CC BY 3.0. Tipografías: Nunito y Caveat, SIL Open Font License. Herramientas PDF: pypdf y pypdfium2.',
   'ft.c3': 'Las imágenes de las capturas se generaron para esta página; no son fotos reales.',
@@ -63,7 +63,7 @@ function setLang(lang) {
   }
   html.lang = lang;
   $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
-  document.title = lang === 'es' ? 'Opia: crea cosas, que sigan siendo tuyas' : 'Opia: make things, keep them yours';
+  document.title = lang === 'es' ? 'Opia para Windows: crea cosas, que sigan siendo tuyas' : 'Opia for Windows: make things, keep them yours';
   store.set('opia-site-lang', lang); themeLabel(); fitRing();
 }
 
