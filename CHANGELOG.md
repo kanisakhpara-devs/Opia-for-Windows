@@ -61,7 +61,7 @@ Fixed during testing:
 The Android Java code compiles against the Android 14 framework classes.
 
 **Not tested:**
-- **Not built or run on a phone.** This cloud computer cannot download the Android SDK, so the first real build happens on GitHub after this push.
+- **Not run on a phone.** This cloud computer cannot download the Android SDK, so the app is built on GitHub instead. The first build there (Android workflow, run 1) **succeeded** and published a 6.2 MB `Opia.apk` to the *android* release. I downloaded that APK and checked that it contains the app, the music engine and the PDF libraries; I could not install or run it.
 - Not tried on a real phone, a real microphone or TalkBack.
 - HEIC and RAW photos mostly will not open on phones.
 
