@@ -37,7 +37,9 @@ jobs:
 
       - name: Stamp the version
         shell: bash
-        run: echo "{\"version\": \"1.0.${{ github.run_number }}\", \"commit\": \"${GITHUB_SHA}\"}" > server/build.json
+        run: |
+          echo "{\"version\": \"1.0.${{ github.run_number }}\", \"commit\": \"${GITHUB_SHA}\"}" > server/build.json
+          cat server/build.json
 
       - name: Build Opia.exe
         run: >
