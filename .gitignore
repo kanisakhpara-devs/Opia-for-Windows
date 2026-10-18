@@ -4,3 +4,4 @@ dist/
 build/
 *.spec
 .claude/
+server/build.json

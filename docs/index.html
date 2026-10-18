@@ -168,7 +168,7 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
     <div class="words">
       <p class="kicker plain" data-i18n="p.k">Private by design</p>
       <h2 id="h-private" data-i18n="p.h">Your files never leave your desk.</h2>
-      <p data-i18n="p.p">Opia has no account and no cloud. Photos, songs, videos and documents stay in your own folders, and the originals are never changed. It only goes online for map tiles, and for FTP uploads you start yourself.</p>
+      <p data-i18n="p.p">Opia has no account and no cloud. Photos, songs, videos and documents stay in your own folders, and the originals are never changed. It only goes online for map tiles, for FTP uploads you start yourself, and to check for updates once you've allowed it.</p>
       <p class="margin hand write" data-i18n="p.m">no sign-up · no subscription · works offline</p>
     </div>
   </section>
@@ -215,7 +215,7 @@ document.documentElement.classList.add('js'); try { if (localStorage.getItem('op
         <p class="small" data-i18n="d.note">The ready-to-run app goes on the Releases page. If there isn't one there yet, run it from source. On a phone? Try <a href="https://kanisakhpara-devs.github.io/Opia-for-Android/">Opia for Android</a>.</p>
         <div class="code"><pre tabindex="0" aria-label="Commands to run Opia from source"><code>git clone https://github.com/kanisakhpara-devs/Opia-for-Windows
 cd Opia-for-Windows
-pip install Pillow numpy opencv-python-headless rawpy exifread soundfile pywebview pillow-heif pypdf pypdfium2 cryptography imageio-ffmpeg
+pip install -r requirements.txt
 python run.py</code></pre><button type="button" class="copy" data-i18n="d.copy">Copy</button></div>
       </div>
     </div>

@@ -3,6 +3,41 @@
 Every change to Opia is listed here, newest first, with what was tested and what was not.
 Work done in a cloud session (no access to the Windows PC) says so: those changes were tested in headless Chromium on Linux, not in the packaged `Opia.exe` window.
 
+## Updates from GitHub (cloud session, 2026-10-18)
+
+**Added** an update wizard: **Help → Check for Updates…** (`server/updates.py`, `web/js/updates.js`).
+
+**How it asks:**
+- Before it goes online at all, it asks: "To look for a new version, Opia needs to go online and ask GitHub… Nothing about you, this computer or your files is sent."
+- There is a box to check automatically once a day.
+- The question comes once, a few seconds after start-up, but not during the first-run tour. After that it lives in Help.
+- Every result has **Don't go online for updates**, which takes the permission back.
+
+**What it does:**
+- When there's something new, it shows what changed (the release's notes, or the commit messages) and offers **Update now**.
+- It updates with a progress bar in the activity area, then **Restart now** closes Opia and opens the new version. A small script waits for Opia to exit first.
+- How it updates depends on how Opia is installed:
+  - **Opia.exe:** downloads the newest release's Opia.exe, checks that it is a complete Windows program, and swaps it in.
+  - **A git copy:** `git pull --ff-only` from GitHub, then `pip install -r requirements.txt`. It refuses if the copy has its own changes, and says so.
+  - **A plain folder:** downloads the code archive and copies it over the folder.
+
+**Also added:**
+- **A Windows build workflow** (`.github/workflows/windows.yml`). On every push to `main`, GitHub's Windows machines install the requirements, stamp the version (1.0.N) and build Opia.exe with the usual PyInstaller command.
+- **A smoke test:** the workflow starts the exe, asks it a question over its API, and only then publishes the exe as release v1.0.N. That gives the Releases page, the website's Download button and the exe updater something to download. The notes are the changes since the last release.
+- **`requirements.txt`**, so the README, the website and the updater install the same packages.
+
+**Changed:** the About box and the website's privacy section now name update checks as one of the things Opia goes online for.
+
+**Tested here (Linux):**
+- **Checking GitHub for real:** refused before permission; "up to date" for this copy; one commit found, with its message, when pretending to be a commit behind.
+- **The git update** on a throwaway copy a commit behind: it moved forward to the newest commit.
+- **The folder update:** it downloaded 43 MB and the result matches the git copy exactly.
+- **The wizard in the app:** the first-start question, Allow, "up to date", the offer screen with notes, and Help → Check for Updates…, with no script errors.
+
+**Not tested:**
+- **The exe swap and the restart script.** They are Windows-only, and there was no exe release to update from yet. The first Windows build runs on GitHub after this push.
+- **Spanish:** the wizard's Spanish text is in place but wasn't checked on screen.
+
 ## Opia for Windows, and Opia for Android moves out (cloud session, 2026-10-18)
 
 **Renamed** this project to **Opia for Windows**: in the README's title and introduction, and on the website's title, hero, download ticket and footer (in English and Spanish). The links now point to `github.com/kanisakhpara-devs/Opia-for-Windows` and `kanisakhpara-devs.github.io/Opia-for-Windows`. GitHub repository names can't contain spaces, so the repository itself is to be named `Opia-for-Windows`; that rename is done in the repository's settings.

@@ -8,7 +8,7 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from . import core
-from . import catalog, exporter, files, icc, imageedit, imaging, merge, music, pdf, people, plugins, tether, tools, video, xmp  # noqa: F401  (register APIs)
+from . import catalog, exporter, files, icc, imageedit, imaging, merge, music, pdf, people, plugins, tether, tools, updates, video, xmp  # noqa: F401  (register APIs)
 from .core import api, cfg, ApiError, Binary, FileRef
 
 mimetypes.add_type('application/javascript', '.js')

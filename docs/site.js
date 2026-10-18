@@ -34,7 +34,7 @@ const ES = {
   'b6.t': 'Complementos.', 'b6.p': 'Añade tus propios comandos en Python.',
   'st.ring': 'SE QUEDA EN ESTE ORDENADOR · SE QUEDA EN ESTE ORDENADOR · ',
   'p.k': 'Privada desde el diseño', 'p.h': 'Tus archivos nunca salen de tu mesa.',
-  'p.p': 'Opia no tiene cuenta ni nube. Fotos, canciones, vídeos y documentos se quedan en tus carpetas, y los originales nunca cambian. Solo se conecta para los mosaicos del mapa y para las subidas FTP que tú inicies.',
+  'p.p': 'Opia no tiene cuenta ni nube. Fotos, canciones, vídeos y documentos se quedan en tus carpetas, y los originales nunca cambian. Solo se conecta para los mosaicos del mapa, para las subidas FTP que tú inicies y para buscar actualizaciones si lo permites.',
   'p.m': 'sin registro · sin suscripción · sin conexión',
   'n.h': 'Novedades', n1: 'un editor de imágenes por capas, con selecciones, texto, ajustes y filtros.', n2: 'un editor de vídeo con línea de tiempo, títulos y fundidos que exporta MP4.',
   n3: 'suelta archivos de sonido en la línea de tiempo donde quieras; arrastra clips entre pistas.', 'n4.t': 'Accesibilidad', n4: 'todo accesible con el teclado, nombres para lectores de pantalla, más contraste.',

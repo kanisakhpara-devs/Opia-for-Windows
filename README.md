@@ -125,7 +125,7 @@ Opia opens in its own window. Closing the window stops it and, if one is due, ba
 Python 3.10 or newer, with:
 
 ```bash
-pip install Pillow numpy opencv-python-headless rawpy exifread soundfile pywebview pillow-heif pypdf pypdfium2 cryptography imageio-ffmpeg
+pip install -r requirements.txt
 ```
 
 `run.py` options: `--port N`, `--no-window` (open the printed address yourself), `--catalog path\to\file.opiacat`, `--home folder`.
@@ -199,6 +199,16 @@ See `plugins\contact_sheet` and `plugins\export_manifest`.
 </details>
 
 <br>
+
+## 🔄 Updates
+
+**Help → Check for Updates…** keeps Opia current. The first time, it asks whether Opia may go online to check GitHub; nothing about you or your files is sent. If you allow it, it can also check once a day by itself. When there's something new, it shows what changed and offers **Update now**, then restarts. How it updates depends on how you run Opia:
+
+- **Opia.exe** (from [Releases](https://github.com/kanisakhpara-devs/Opia-for-Windows/releases)): downloads the new Opia.exe and swaps it in when Opia closes.
+- **A git copy** (cloned from this repository): pulls the changes with `git pull --ff-only`, then installs any new Python packages from `requirements.txt`. It won't touch a copy with its own changes; it tells you to update that one yourself.
+- **A plain folder** (downloaded as a zip): downloads the newest code and copies it over the folder.
+
+Every push to `main` builds a new Opia.exe on GitHub's Windows machines (`.github/workflows/windows.yml`) and publishes it as a release, after checking that it starts.
 
 ## ♿ Accessibility
 
