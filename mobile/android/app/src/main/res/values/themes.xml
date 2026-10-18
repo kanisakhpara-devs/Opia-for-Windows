@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dark until the page loads; the page then sets the bars to match its own theme -->
+    <style name="Opia" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/opia_ink</item>
+        <item name="android:colorBackground">@color/opia_ink</item>
+        <item name="android:colorAccent">@color/opia_blue</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

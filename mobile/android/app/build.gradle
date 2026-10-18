@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+/* The web app is put together by mobile/assemble.py (it pulls in the music engine and samples shared with the desktop app). */
+def web = tasks.register('assembleWeb', Exec) {
+    workingDir "$rootDir/.."
+    commandLine 'python3', 'assemble.py'
+}
+tasks.named('preBuild') { dependsOn web }
+
+android {
+    namespace 'io.github.kanisakhpara.opia'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'io.github.kanisakhpara.opia'
+        minSdk 29
+        targetSdk 35
+        versionCode((System.getenv('OPIA_VERSION_CODE') ?: '1') as int)
+        versionName System.getenv('OPIA_VERSION_NAME') ?: '0.1.0'
+    }
+
+    /* A private key from the build's secrets when there is one; otherwise the public key in this folder, so that
+       every build can install over the last one. See mobile/README.md. */
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('OPIA_KEYSTORE') ?: "$rootDir/opia-public.jks")
+            storePassword System.getenv('OPIA_KEYSTORE_PASSWORD') ?: 'opia-public'
+            keyAlias System.getenv('OPIA_KEY_ALIAS') ?: 'opia'
+            keyPassword System.getenv('OPIA_KEY_PASSWORD') ?: 'opia-public'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    sourceSets {
+        main { assets.srcDirs = ["$rootDir/../build"] }   // packs build/www as assets/www
+    }
+    lint {
+        abortOnError false
+    }
+}

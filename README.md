@@ -16,6 +16,7 @@
   <a href="#-groove"><b>Groove</b></a> ·
   <a href="#-folio"><b>Folio</b></a> ·
   <a href="#-get-started"><b>Get started</b></a> ·
+  <a href="mobile/README.md"><b>Android</b></a> ·
   <a href="https://kanisakhpara-devs.github.io/Opia/"><b>Website</b></a> ·
   <a href="CHANGELOG.md"><b>Changelog</b></a>
 </p>
@@ -111,6 +112,8 @@ python run.py
 ```
 
 Opia opens in its own window. Closing the window stops it and, if one is due, backs up your catalog.
+
+**On an Android phone:** there is a phone version with Lens, Imagine, Folio and Groove, made for touch. Open [Opia.apk](https://github.com/kanisakhpara-devs/Opia/releases/download/android/Opia.apk) on the phone to install it (Android 10 or newer). What it does, and what it does not do yet, is in [mobile/README.md](mobile/README.md).
 
 <details>
 <summary><b>Requirements and options</b></summary>
