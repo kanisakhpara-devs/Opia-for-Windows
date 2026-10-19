@@ -114,6 +114,15 @@ function registerCommands() {
   C('photo.videoshow', 'Make a Video in Motion', '', () => { App.show('video'); Vid.addPhotos(); });
   C('help.tour', 'Take the Tour', '', () => Tour.start());
   C('help.updates', 'Check for Updates…', '', () => Updates.open());
+  C('help.contact', 'Get Help on WhatsApp…', '', async () => {
+    const num = '+91 8450973767';
+    const go = await UI.dialog({ title: 'Get help', width: 440, body: h('div', { class: 'upd' },
+      h('p', { class: 'msg' }, 'Message Opia\'s help number on WhatsApp:'), h('p', { class: 'msg' }, h('b', { data: { notr: 1 } }, num)),
+      h('p', { class: 'msg dim' }, 'Messages are preferred; calls may not be answered.')),
+      buttons: [['Copy Number', 'copy'], ['Close', null], ['Open WhatsApp', true, 'primary']] });
+    if (go === 'copy') navigator.clipboard.writeText(num).then(() => UI.toast('Number copied.'), () => UI.toast(num));
+    if (go === true) api('help_whatsapp').catch(UI.error);
+  });
   C('help.about', 'About Opia', '', async () => { const ff = await api('video_ffmpeg').catch(() => ({ ok: false })); UI.alert('About Opia', `Opia ${App.boot.version}\nA local-first creative suite: Lens for photos, Imagine for pictures, Motion for video, Groove for music and Folio for PDFs.\n\nCatalog: ${App.info.path}\nRAW support: ${App.boot.raw ? 'yes (LibRaw)' : 'not installed'}   Face models: ${App.boot.faces ? 'installed' : 'missing'}\nVideo (FFmpeg): ${ff.ok ? ff.version.replace(/ Copyright.*$/, '') : 'not found'}\nEverything runs on this computer. The only things fetched from the internet are map tiles, and update checks once you have allowed them.`); });
 }
 
@@ -127,14 +136,14 @@ function buildMenus() {
     ['Track', ['music.add.drums', 'music.add.bass', 'music.add.chords', 'music.add.melody', 'music.import']],
     ...(Modes.beginner ? [] : [['Effects', () => Music.fxItems()], ['Generate', () => Music.genItems()]]),
     ['View', () => [...looks, 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
   if (App.module === 'pdf') return App.buildMenus([
     ['File', Modes.beginner ? ['pdf.open', 'pdf.add', '-', 'pdf.save', 'pdf.images', '-', 'pdf.close', 'file.prefs'] : ['pdf.open', 'pdf.add', '-', 'pdf.save', 'pdf.saveas', '-', 'pdf.images', 'pdf.text', 'pdf.split', '-', 'pdf.props', 'pdf.close', '-', 'file.prefs']],
     ['Edit', ['pdf.undo', 'pdf.redo', '-', 'pdf.delete', 'pdf.selall', 'pdf.find']],
     ['Page', ['pdf.rotl', 'pdf.rotr', 'pdf.dup', 'pdf.delpage', 'pdf.blank', '-', 'pdf.extract', 'pdf.numbers', ...(Modes.beginner ? [] : ['pdf.watermark']), 'pdf.password']],
     ['View', () => [...looks, 'pdf.edit', 'pdf.pages', '-', 'pdf.zin', 'pdf.zout', 'pdf.zfit', '-', 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
   if (App.module === 'image') return App.buildMenus(Modes.beginner ? [
     ['File', ['image.new', 'image.open', 'image.fromphoto', '-', 'image.save', 'image.export', '-', 'image.close', 'file.prefs']],
@@ -143,7 +152,7 @@ function buildMenus() {
     ['Layer', ['image.newlayer', 'image.duplayer', 'image.dellayer', '-', 'image.layercopy', 'image.mergedown']],
     ['Select', ['image.selall', 'image.deselect', 'image.invert']],
     ['View', () => [...looks, 'image.zin', 'image.zout', 'image.zfit', '-', 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ] : [
     ['File', ['image.new', 'image.open', 'image.fromphoto', 'image.place', '-', 'image.save', 'image.saveas', 'image.export', '-', 'image.close', 'file.prefs']],
     ['Edit', ['image.undo', 'image.redo', '-', 'image.cut', 'image.copy', 'image.copymerged', 'image.paste', 'image.clear', 'image.fill', '-', 'image.transform', 'image.fliplh', 'image.fliplv']],
@@ -152,7 +161,7 @@ function buildMenus() {
     ['Select', ['image.selall', 'image.deselect', 'image.invert', '-', 'image.feather', 'image.sellayer']],
     ['Filter', ['image.blur', 'image.sharpen', 'image.noise', 'image.pixelate']],
     ['View', () => [...looks, 'image.zin', 'image.zout', 'image.zfit', 'image.z100', '-', 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
   if (App.module === 'video') return App.buildMenus([
     ['File', Modes.beginner ? ['video.new', 'video.import', 'video.photos', '-', 'video.export', 'video.frame', '-', 'video.settings', 'file.prefs'] : ['video.new', 'video.rename', 'video.delete', '-', 'video.import', 'video.importdisk', 'video.photos', '-', 'video.export', 'video.frame', 'video.frameimg', '-', 'video.settings', 'file.prefs']],
@@ -160,14 +169,14 @@ function buildMenus() {
     ['Clip', ['video.title', 'video.xfade', ...(Modes.beginner ? [] : ['video.detach', '-', 'video.vtrack', 'video.atrack'])]],
     ['Playback', ['video.play', 'video.start', 'video.end']],
     ['View', () => [...looks, 'video.zin', 'video.zout', 'video.zfit', '-', 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
   if (Modes.beginner) return App.buildMenus([   // the short menus; Advanced has everything
     ['File', ['file.import', 'file.export', '-', 'file.prefs']],
     ['Edit', ['dev.undo', 'dev.redo', '-', 'edit.selectall', 'edit.selectnone']],
     ['Photo', ['flag.pick', 'flag.none', 'flag.reject', rating, '-', 'photo.rotl', 'photo.rotr', '-', 'dev.auto', 'dev.reset', 'photo.imageedit', 'photo.videoshow', '-', 'photo.sharpest', 'photo.duplicates', '-', 'col.new', 'photo.remove']],
     ['View', () => [...looks, 'view.grid', 'view.loupe', 'go.develop', '-', 'view.full']],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
   App.buildMenus([
     ['File', () => ['file.newcatalog', 'file.catalogs', { label: 'Open Recent', sub: recent }, '-', 'file.import', 'file.tether', '-', 'file.export', 'file.exportagain', { label: 'Plug-in Extras', sub: () => Plugins.menu() }, '-', 'file.backup', 'file.optimize', 'file.plugins', '-', 'file.prefs']],
@@ -181,7 +190,7 @@ function buildMenus() {
     ['Metadata', ['meta.kwnew', 'edit.keywordsets', '-', 'meta.sync', 'edit.metapresets', '-', 'meta.xmpwrite', 'meta.xmpread', 'meta.exif']],
     ['View', () => [...looks, 'view.grid', 'view.loupe', 'view.compare', 'view.survey', 'view.people', '-', 'view.info', 'view.panels', 'view.film', 'view.full']],
     ['Window', MODULES.map(m => 'mod.' + m.id)],
-    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.about']],
+    ['Help', ['help.tour', 'help.keys', 'help.keymap', '-', 'help.updates', 'help.contact', 'help.about']],
   ]);
 }
 

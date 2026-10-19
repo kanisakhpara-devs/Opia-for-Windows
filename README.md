@@ -270,6 +270,10 @@ What you add is drawn into the page, so it looks the same in every viewer, and i
 
 <br>
 
+## 💬 Need help?
+
+Message Opia's help number on WhatsApp: **[+91 8450973767](https://wa.me/918450973767)**. Messages are preferred; calls may not be answered. The app has it too, under Help › Get Help on WhatsApp.
+
 ## 📜 Credits and licences
 
 - **FFmpeg** (Motion) comes from the [imageio-ffmpeg](https://github.com/imageio/imageio-ffmpeg) package. Its Python code is BSD-2-Clause, but the `ffmpeg` program inside it is a separate program under its own licence. Its builds are usually GPL builds (they include x264; run `ffmpeg -version` to check). That is fine for using Opia yourself. If you distribute `Opia.exe` with that ffmpeg inside, the GPL applies to the ffmpeg part. To use a different ffmpeg, put its full path in `config.json` as `"ffmpeg": "C:\\path\\to\\ffmpeg.exe"`; Help › About shows which one is in use.

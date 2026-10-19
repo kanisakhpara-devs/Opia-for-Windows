@@ -3,6 +3,19 @@
 Every change to Opia is listed here, newest first, with what was tested and what was not.
 Work done in a cloud session (no access to the Windows PC) says so: those changes were tested in headless Chromium on Linux, not in the packaged `Opia.exe` window.
 
+## Help number on WhatsApp (cloud session, 2026-10-19)
+
+**Added** a help number, +91 8450973767, for messages on WhatsApp. It's in three places:
+- **Help → Get Help on WhatsApp…** shows the number with Copy Number and Open WhatsApp buttons. Open WhatsApp opens `https://wa.me/918450973767` in the default browser, which hands it to WhatsApp when it is installed.
+- The README.
+- The website footer.
+
+Each says messages are preferred and calls may not be answered. Spanish translations are included.
+
+**Tested:** the dialog opens from the command in headless Chromium against the local server.
+
+**Not tested:** Open WhatsApp on a real Windows PC.
+
 ## Updates from GitHub (cloud session, 2026-10-18)
 
 **Added** an update wizard: **Help → Check for Updates…** (`server/updates.py`, `web/js/updates.js`).

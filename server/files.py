@@ -8,6 +8,7 @@ import shutil
 import string
 import subprocess
 import sys
+import webbrowser
 
 from . import core, imaging, xmp
 from .catalog import keyword_ensure, photos_out
@@ -156,6 +157,16 @@ def fs_open(path, app=None):
         subprocess.Popen([app, path])
     elif sys.platform == 'win32':
         os.startfile(path)
+    return True
+
+
+HELP_WHATSAPP = 'https://wa.me/918450973767'   # Help › Get Help on WhatsApp
+
+
+@api
+def help_whatsapp():
+    """Open a WhatsApp chat with Opia's help number in the default browser (which hands it to WhatsApp if installed)."""
+    webbrowser.open(HELP_WHATSAPP)
     return True
 
 
