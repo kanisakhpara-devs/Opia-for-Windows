@@ -19,6 +19,7 @@
   <a href="#-folio"><b>Folio</b></a> ·
   <a href="#-get-started"><b>Get started</b></a> ·
   <a href="https://kanisakhpara-devs.github.io/Opia-for-Windows/"><b>Website</b></a> ·
+  <a href="https://github.com/kanisakhpara-devs/Opia-for-Mac"><b>Opia for Mac</b></a> ·
   <a href="https://github.com/kanisakhpara-devs/Opia-for-Android"><b>Opia for Android</b></a> ·
   <a href="CHANGELOG.md"><b>Changelog</b></a>
 </p>
@@ -116,6 +117,8 @@ python run.py
 ```
 
 Opia opens in its own window. Closing the window stops it and, if one is due, backs up your catalog.
+
+**On a Mac:** there's **[Opia for Mac](https://github.com/kanisakhpara-devs/Opia-for-Mac)**, this app made for macOS, with all five workspaces. It's an alpha: download [Opia-AppleSilicon.dmg](https://github.com/kanisakhpara-devs/Opia-for-Mac/releases/latest/download/Opia-AppleSilicon.dmg) or [Opia-Intel.dmg](https://github.com/kanisakhpara-devs/Opia-for-Mac/releases/latest/download/Opia-Intel.dmg).
 
 **On an Android phone:** there's **[Opia for Android](https://github.com/kanisakhpara-devs/Opia-for-Android)**, with Lens, Imagine, Folio and Groove made for touch. It has its own repository and [website](https://kanisakhpara-devs.github.io/Opia-for-Android/), and you install it by opening [Opia.apk](https://github.com/kanisakhpara-devs/Opia-for-Android/releases/latest/download/Opia.apk) on the phone.
 
