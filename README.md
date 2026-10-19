@@ -132,7 +132,7 @@ pip install -r requirements.txt
 
 `run.py` options: `--port N`, `--no-window` (open the printed address yourself), `--catalog path\to\file.opiacat`, `--home folder`.
 
-The packaged single-file app (`dist\Opia.exe`) is built with PyInstaller; the exact command is in [CHANGELOG.md](CHANGELOG.md).
+The packaged single-file app (`dist\Opia.exe`) is built with PyInstaller; the exact command is in [.github/workflows/windows.yml](.github/workflows/windows.yml).
 
 </details>
 
