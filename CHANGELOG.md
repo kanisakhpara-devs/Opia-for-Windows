@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7 — 2026-10-30
+
+- Motion exports keep mono voice-overs as loud as in the preview
+- Motion exports use higher quality sound (320 kb/s)
+
 ## 1.0.6 — 2026-10-30
 
 - Fixed Motion exports with broken sound when a clip came from a phone video

@@ -79,7 +79,7 @@ def _kind(path):
 def _probe(path):
     """Duration, size, frame rate and codecs, read from what ffmpeg prints about the file."""
     err = _run(['-i', path], timeout=60).stderr.decode('utf-8', 'replace')
-    info = {'dur': 0.0, 'w': 0, 'h': 0, 'fps': 0.0, 'vcodec': None, 'acodec': None, 'rot': 0, 'pix': None}
+    info = {'dur': 0.0, 'w': 0, 'h': 0, 'fps': 0.0, 'vcodec': None, 'acodec': None, 'rot': 0, 'pix': None, 'mono': False}
     m = re.search(r'Duration: (\d+):(\d+):(\d+(?:\.\d+)?)', err)
     if m:
         info['dur'] = int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3))
@@ -97,6 +97,7 @@ def _probe(path):
                 info['fps'] = float(m.group(1))
         elif 'Audio:' in line and not info['acodec']:
             info['acodec'] = line.split('Audio:')[1].strip().split()[0].strip(',')
+            info['mono'] = bool(re.search(r'\bmono\b', line))
         m = re.search(r'rotat\w* (?:of )?:?\s*(-?[\d.]+)', line)
         if m and info['vcodec'] and not info['rot']:
             info['rot'] = int(round(float(m.group(1)))) % 360
@@ -415,6 +416,13 @@ def _graph(project, tmp, titles):
                 best = max(best, c['start'] + c['dur'] - o['start'])
         return best
 
+    mono = {}
+
+    def is_mono(src):
+        if src not in mono:
+            mono[src] = _probe(src)['mono']
+        return mono[src]
+
     vis = sorted([c for c in clips if c['kind'] in ('video', 'image', 'title') and not tracks[c['track']].get('hide')],
                  key=lambda c: (-order.index(c['track']), c['start']))
     for c in vis:
@@ -460,7 +468,10 @@ def _graph(project, tmp, titles):
         if vol <= 0:
             continue
         k = add_input(['-ss', '%.3f' % c['in'], '-t', '%.3f' % c['dur'], '-i', c['src']])
-        af = ['atrim=duration=%.3f' % c['dur'], 'asetpts=PTS-STARTPTS', 'aresample=48000', 'aformat=sample_fmts=fltp:channel_layouts=stereo', 'volume=%.3f' % vol]
+        af = ['atrim=duration=%.3f' % c['dur'], 'asetpts=PTS-STARTPTS', 'aresample=48000']
+        if is_mono(c['src']):
+            af.append('pan=stereo|c0=c0|c1=c0')    # both speakers at full level, as the preview plays it (ffmpeg's own upmix is 3 dB down)
+        af += ['aformat=sample_fmts=fltp:channel_layouts=stereo', 'volume=%.3f' % vol]
         af += audio_fades(c, successor_overlap(c))
         ms = int(round(c['start'] * 1000))
         if ms:
@@ -497,6 +508,7 @@ def video_export(project, path, titles=None, quality='high', size=None):
     if size:
         project = dict(project, w=size[0], h=size[1])
     crf = {'high': 18, 'medium': 22, 'small': 27}.get(quality, 20)
+    abr = '192k' if quality == 'small' else '320k'      # ffmpeg's own AAC encoder audibly dulls drum hits and consonants below 320k
 
     def run(job):
         tmp = tempfile.mkdtemp(prefix='opia-video-')
@@ -508,7 +520,7 @@ def video_export(project, path, titles=None, quality='high', size=None):
             part = path + '.part.mp4'
             args = ['-y'] + inputs + ['-filter_complex_script', script, '-map', '[vout]', '-map', '[aout]',
                                       '-c:v', 'libx264', '-preset', 'medium', '-crf', str(crf), '-pix_fmt', 'yuv420p', '-r', str(fps),
-                                      '-c:a', 'aac', '-b:a', '192k', '-t', '%.3f' % total, '-movflags', '+faststart', '-progress', 'pipe:1', '-nostats', part]
+                                      '-c:a', 'aac', '-b:a', abr, '-t', '%.3f' % total, '-movflags', '+faststart', '-progress', 'pipe:1', '-nostats', part]
             _ffmpeg_job(job, args, total)
             os.replace(part, path)
             return {'path': path, 'size': os.path.getsize(path), 'dur': total}
