@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 — 2026-10-30
+
+- Fixed Motion exports with broken sound when a clip came from a phone video
+
 ## 1.0.5 — 2026-10-19
 
 - Help number on WhatsApp in the Help menu

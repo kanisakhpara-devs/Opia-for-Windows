@@ -465,6 +465,9 @@ def _graph(project, tmp, titles):
         ms = int(round(c['start'] * 1000))
         if ms:
             af.append('adelay=%d:all=1' % ms)
+        # adelay can hand out its lead-in silence with no timestamps (seen with AAC from phone videos), and amix
+        # then stamps nonsense times on the whole track; renumber every frame from its sample count instead
+        af.append('asetpts=N/SR/TB')
         achains.append('[%d:a]%s[a%d]' % (k, ','.join(af), len(achains)))
 
     bg = project.get('bg') or '#000000'
