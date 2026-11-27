@@ -396,6 +396,19 @@ def _graph(project, tmp, titles):
         return add_input.n.__next__()
     add_input.n = iter(range(10 ** 6))
 
+    def speed(c):
+        """How fast a video or sound clip plays its file (1 to 10); a clip of length dur uses dur * speed of the file."""
+        return min(10.0, max(1.0, float(c.get('speed') or 1))) if c['kind'] in ('video', 'audio') else 1.0
+
+    def atempo(s):
+        out = []
+        while s > 2:                     # one atempo step is safest at 2x or under
+            out.append('atempo=2')
+            s /= 2
+        if abs(s - 1) > 1e-6:
+            out.append('atempo=%.4f' % s)
+        return out
+
     def audio_fades(c, xin):
         f = []
         a_in = max(float(c.get('fadeIn') or 0), float(c.get('xfade') or 0))
@@ -426,9 +439,9 @@ def _graph(project, tmp, titles):
     vis = sorted([c for c in clips if c['kind'] in ('video', 'image', 'title') and not tracks[c['track']].get('hide')],
                  key=lambda c: (-order.index(c['track']), c['start']))
     for c in vis:
-        dur = c['dur']
+        dur, sp = c['dur'], speed(c)
         if c['kind'] == 'video':
-            k = add_input(['-ss', '%.3f' % c['in'], '-t', '%.3f' % dur, '-i', c['src']])
+            k = add_input(['-ss', '%.3f' % c['in'], '-t', '%.3f' % (dur * sp), '-i', c['src']])
         else:
             if c['kind'] == 'title':
                 p = os.path.join(tmp, 'title_%s.png' % c['id'])
@@ -444,8 +457,8 @@ def _graph(project, tmp, titles):
         if c['kind'] == 'title':
             vf = ['fps=%s' % fps, 'scale=%d:%d' % (W, H), 'setsar=1', 'format=rgba']
             x, y = '0', '0'
-        vf.insert(0, 'trim=duration=%.3f' % dur)
-        vf.insert(1, 'setpts=PTS-STARTPTS')
+        vf.insert(0, 'trim=duration=%.3f' % (dur * sp))
+        vf.insert(1, 'setpts=(PTS-STARTPTS)/%.4f' % sp)
         fin, fout = max(float(c.get('fadeIn') or 0), float(c.get('xfade') or 0)), float(c.get('fadeOut') or 0)
         if fin:
             vf.append('fade=t=in:st=0:d=%.3f:alpha=1' % fin)
@@ -467,8 +480,9 @@ def _graph(project, tmp, titles):
         vol = float(c.get('vol', 1)) * float(t.get('vol', 1))
         if vol <= 0:
             continue
-        k = add_input(['-ss', '%.3f' % c['in'], '-t', '%.3f' % c['dur'], '-i', c['src']])
-        af = ['atrim=duration=%.3f' % c['dur'], 'asetpts=PTS-STARTPTS', 'aresample=48000']
+        sp = speed(c)
+        k = add_input(['-ss', '%.3f' % c['in'], '-t', '%.3f' % (c['dur'] * sp), '-i', c['src']])
+        af = ['atrim=duration=%.3f' % (c['dur'] * sp), 'asetpts=PTS-STARTPTS', 'aresample=48000'] + atempo(sp)
         if is_mono(c['src']):
             af.append('pan=stereo|c0=c0|c1=c0')    # both speakers at full level, as the preview plays it (ffmpeg's own upmix is 3 dB down)
         af += ['aformat=sample_fmts=fltp:channel_layouts=stereo', 'volume=%.3f' % vol]

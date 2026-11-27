@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.8 — 2026-11-27
+
+- Motion: copy and paste clips (Ctrl+C, Ctrl+V); they paste at the playhead
+- Motion: speed up video and sound clips, up to 10 times
+
 ## 1.0.7 — 2026-10-30
 
 - Motion exports keep mono voice-overs as loud as in the preview

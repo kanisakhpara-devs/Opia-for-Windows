@@ -34,7 +34,7 @@ const Vid = {
     new ResizeObserver(() => { if (App.module === 'video' && this.p) { this.fitScreen(); this.paint(); } }).observe(this.screen);
     App.on('prefs', k => { if (k === 'beginner' && this.bar) this.draw(); });
     this.keys = {
-      'Space': () => this.toggle(), 'S': () => this.split(), 'Delete': () => this.remove(), 'Backspace': () => this.remove(), 'Shift+Delete': () => this.remove(true), 'Ctrl+D': () => this.duplicate(),
+      'Space': () => this.toggle(), 'S': () => this.split(), 'Delete': () => this.remove(), 'Backspace': () => this.remove(), 'Shift+Delete': () => this.remove(true), 'Ctrl+D': () => this.duplicate(), 'Ctrl+C': () => this.copy(), 'Ctrl+V': () => this.paste(),
       'Ctrl+Z': 'video.undo', 'Ctrl+Y': 'video.redo', 'Ctrl+Shift+Z': 'video.redo', 'Ctrl+I': 'video.import', 'Ctrl+Shift+E': 'video.export', 'Ctrl+N': 'video.new', 'T': 'video.title', 'Ctrl+A': () => this.selectAll(),
       'Home': () => this.seek(0), 'End': () => this.seek(this.total()), 'ArrowLeft': () => this.seek(this.t - 1 / this.p.fps), 'ArrowRight': () => this.seek(this.t + 1 / this.p.fps),
       'Shift+ArrowLeft': () => this.seek(this.t - 1), 'Shift+ArrowRight': () => this.seek(this.t + 1), 'ArrowUp': () => this.jump(-1), 'ArrowDown': () => this.jump(1),
@@ -160,7 +160,7 @@ const Vid = {
     let cs = this.picked().filter(c => c.start + eps < t && t < c.start + c.dur - eps); if (!this.sel.size) cs = this.p.clips.filter(c => c.start + eps < t && t < c.start + c.dur - eps);
     if (!cs.length) return UI.toast(this.sel.size ? 'Move the playhead over the picked clip to split it there.' : 'Move the playhead over a clip to split it there.');
     this.mark(); const made = [];
-    for (const c of cs) { const cut = t - c.start, b = { ...clone(c), id: this.uid(), start: t, in: c.in + cut, dur: c.dur - cut, fadeIn: 0, xfade: 0 }; c.dur = cut; c.fadeOut = 0; this.p.clips.push(b); made.push(b.id); }
+    for (const c of cs) { const cut = t - c.start, b = { ...clone(c), id: this.uid(), start: t, in: c.in + cut * this.rate(c), dur: c.dur - cut, fadeIn: 0, xfade: 0 }; c.dur = cut; c.fadeOut = 0; this.p.clips.push(b); made.push(b.id); }
     this.sel = new Set(made); this.after();
   },
   remove(ripple) {
@@ -169,6 +169,17 @@ const Vid = {
     this.sel.clear(); this.after(); this.sync(true);
   },
   duplicate() { const cs = this.picked(); if (!cs.length) return; this.mark(); const made = []; for (const c of cs) { const d = { ...clone(c), id: this.uid(), start: this.trackEnd(c.track), xfade: 0 }; this.p.clips.push(d); made.push(d.id); } this.sel = new Set(made); this.after(); },
+  /* how fast a clip plays its file: video and sound can be sped up to 10x */
+  rate(c) { return c.kind === 'video' || c.kind === 'audio' ? clamp(c.speed || 1, 1, 10) : 1; },
+  setRate(c, v) { const s = clamp(v, 1, 10); c.dur = Math.max(.1, c.dur * this.rate(c) / s); c.speed = s; },
+  copy() { const cs = this.picked(); if (!cs.length) return; this.clipboard = clone(cs); UI.toast(cs.length + ' clip(s) copied. Move the playhead and press Ctrl+V to paste.'); },
+  /* paste at the playhead, on the same tracks where they still exist */
+  paste() {
+    const cs = (this.clipboard || []).filter(c => c.kind === 'title' || this.media.has(c.src)); if (!cs.length) return UI.toast(this.clipboard ? 'Those clips\' media is not in this project.' : 'Copy some clips first (Ctrl+C).');
+    this.mark(); const t0 = Math.min(...cs.map(c => c.start)), made = [];
+    for (const c of cs) { const want = c.kind === 'audio' ? 'audio' : 'video', tr = this.track(c.track); const d = { ...clone(c), id: this.uid(), start: this.t + c.start - t0, xfade: 0, track: tr && tr.kind === want ? tr.id : (want === 'audio' ? this.tracksOf('audio')[0] : this.tracksOf('video').slice(-1)[0]).id }; this.p.clips.push(d); made.push(d.id); }
+    this.sel = new Set(made); this.after();
+  },
   /* move the picked clips along their tracks from the keyboard */
   nudge(d) {
     const cs = this.picked(); if (!cs.length) return; d = Math.max(d, -Math.min(...cs.map(c => c.start))); if (!d) return;
@@ -238,9 +249,10 @@ const Vid = {
   /* keep one clip's media element at the right moment */
   syncOne(c, t, force) {
     const e = this.elFor(c); if (!e || e.kind === 'image') return;
-    const n = e.node, want = c.in + (t - c.start), on = t >= c.start && t < c.start + c.dur, soon = !on && c.start > t && c.start - t < 1.2;
+    const sp = this.rate(c), n = e.node, want = c.in + (t - c.start) * sp, on = t >= c.start && t < c.start + c.dur, soon = !on && c.start > t && c.start - t < 1.2;
+    if (n.playbackRate !== sp) n.playbackRate = sp;
     if (on) {
-      if (this.playing) { if (force || Math.abs(n.currentTime - want) > .3) n.currentTime = want; if (n.paused) n.play().catch(() => {}); }
+      if (this.playing) { if (force || Math.abs(n.currentTime - want) > .3 * sp) n.currentTime = want; if (n.paused) n.play().catch(() => {}); }
       else { if (!n.paused) n.pause(); if (force || Math.abs(n.currentTime - want) > .5 / this.p.fps) n.currentTime = want; }
       const tr = this.track(c.track), sound = c.kind === 'audio' || (c.audio && !c.mute);
       const g = sound && !tr.mute ? (c.vol ?? 1) * (tr.vol ?? 1) * this.env(c, t, true) : 0;
@@ -391,7 +403,7 @@ const Vid = {
       tabindex: 0, role: 'button', 'aria-pressed': String(this.sel.has(c.id)), 'aria-label': ({ video: 'Video', image: 'Picture', title: 'Title', audio: 'Sound' })[c.kind] + ' ' + (c.kind === 'title' ? ((c.title && c.title.text) || '') : c.name) + ', from ' + this.fmtT(c.start) + ', ' + c.dur.toFixed(1) + ' seconds',
       onkeydown: e => { if (e.target === el && (e.key === 'Enter' || e.key === ' ') && !e.ctrlKey) { e.preventDefault(); e.stopPropagation(); if (e.shiftKey) { this.sel.has(c.id) ? this.sel.delete(c.id) : this.sel.add(c.id); } else this.sel = new Set([c.id]); this.seek(c.start); this.drawTimeline(); this.drawInsp(); this.drawTools(); const f = $(`.vd-clip[data-id="${c.id}"]`, this.tl); if (f) f.focus(); } } },
       h('span', { class: 'vd-cname', data: { notr: 1 } }, c.kind === 'title' ? '“' + ((c.title && c.title.text) || 'Title').split('\n')[0] + '”' : c.name));
-    if (c.kind === 'video' && m && w > 30) { const n = clamp(Math.round(w / 72), 1, 24); el.style.backgroundImage = `url("/img/vstrip?path=${encodeURIComponent(m.play || c.src)}&n=${n}&h=44&a=${c.in.toFixed(1)}&b=${(c.in + c.dur).toFixed(1)}")`; }
+    if (c.kind === 'video' && m && w > 30) { const n = clamp(Math.round(w / 72), 1, 24); el.style.backgroundImage = `url("/img/vstrip?path=${encodeURIComponent(m.play || c.src)}&n=${n}&h=44&a=${c.in.toFixed(1)}&b=${(c.in + c.dur * this.rate(c)).toFixed(1)}")`; }
     if (c.kind === 'image' && m) el.style.backgroundImage = `url("${this.mediaUrl(c.src)}")`;
     if (c.kind === 'audio' || (c.kind === 'video' && c.audio && !c.mute)) { const cv = h('canvas', { class: 'vd-wave', width: Math.min(4000, Math.round(w)), height: c.kind === 'audio' ? 40 : 14 }); el.append(cv); this.wave(c, cv); }
     const fin = Math.max(c.fadeIn || 0, c.xfade || 0); if (fin) el.append(h('i', { class: 'vd-fade in' + (c.xfade ? ' x' : ''), style: { width: fin * z + 'px' } }));
@@ -402,7 +414,8 @@ const Vid = {
   async wave(c, cv) {
     let pk = this.peaks.get(c.src); if (!pk) { pk = api('video_peaks', { path: c.src }).catch(() => ({ rate: 50, peaks: [] })); this.peaks.set(c.src, pk); }
     const d = await pk, g = cv.getContext('2d'), w = cv.width, hh = cv.height; g.clearRect(0, 0, w, hh); g.fillStyle = c.kind === 'audio' ? 'rgba(120,220,170,.9)' : 'rgba(255,255,255,.55)';
-    for (let x = 0; x < w; x++) { const t0 = c.in + x / w * c.dur, i = Math.floor(t0 * d.rate), j = Math.max(i + 1, Math.floor((c.in + (x + 1) / w * c.dur) * d.rate)); let v = 0; for (let k = i; k < j && k < d.peaks.length; k++) v = Math.max(v, d.peaks[k]); const y = v / 255 * hh * (c.vol ?? 1); g.fillRect(x, (hh - y) / 2, 1, Math.max(1, y)); }
+    const len = c.dur * this.rate(c);
+    for (let x = 0; x < w; x++) { const t0 = c.in + x / w * len, i = Math.floor(t0 * d.rate), j = Math.max(i + 1, Math.floor((c.in + (x + 1) / w * len) * d.rate)); let v = 0; for (let k = i; k < j && k < d.peaks.length; k++) v = Math.max(v, d.peaks[k]); const y = v / 255 * hh * (c.vol ?? 1); g.fillRect(x, (hh - y) / 2, 1, Math.max(1, y)); }
   },
   drawHead(follow) {
     const hd = $('.vd-head', this.tl); if (!hd) return; const x = this.t * this.z; hd.style.left = x + 'px';
@@ -421,9 +434,9 @@ const Vid = {
     let changed = false;
     const mv = ev => {
       const dt = (ev.clientX - x0) / z; if (!changed && Math.abs(ev.clientX - x0) < 3) return; if (!changed) { changed = true; this.mark(); }
-      const skip = new Set(moving.map(x => x.id)), lim = c.max ? c.max : Infinity;
-      if (edge === 'l') { let s = this.snapTo(o.start + dt, skip, ev); const free = c.kind === 'image' || c.kind === 'title'; s = clamp(s, free ? 0 : Math.max(0, o.start - o.in), o.start + o.dur - .1); const d = s - o.start; c.start = s; c.in = c.kind === 'image' || c.kind === 'title' ? 0 : o.in + d; c.dur = o.dur - d; }
-      else if (edge === 'r') { let end = this.snapTo(o.start + o.dur + dt, skip, ev); end = clamp(end, o.start + .1, c.kind === 'image' || c.kind === 'title' ? Infinity : o.start + (lim - o.in)); c.dur = end - o.start; }
+      const skip = new Set(moving.map(x => x.id)), lim = c.max ? c.max : Infinity, sp = this.rate(c);
+      if (edge === 'l') { let s = this.snapTo(o.start + dt, skip, ev); const free = c.kind === 'image' || c.kind === 'title'; s = clamp(s, free ? 0 : Math.max(0, o.start - o.in / sp), o.start + o.dur - .1); const d = s - o.start; c.start = s; c.in = c.kind === 'image' || c.kind === 'title' ? 0 : o.in + d * sp; c.dur = o.dur - d; }
+      else if (edge === 'r') { let end = this.snapTo(o.start + o.dur + dt, skip, ev); end = clamp(end, o.start + .1, c.kind === 'image' || c.kind === 'title' ? Infinity : o.start + (lim - o.in) / sp); c.dur = end - o.start; }
       else {
         let d = dt; const snapS = this.snapTo(o.start + d, skip, ev), snapE = this.snapTo(o.start + o.dur + d, skip, ev) - o.dur; d = Math.abs(snapS - (o.start + d)) <= Math.abs(snapE - (o.start + d)) ? snapS - o.start : snapE - o.start;
         d = Math.max(d, -Math.min(...orig.map(q => q.start)));
@@ -453,7 +466,7 @@ const Vid = {
       out.push(h('div', { class: 'fsec' }, cs.length > 1 ? cs.length + ' clips picked' : 'Project'));
       if (!cs.length) out.push(h('label', { class: 'frow' }, h('span', {}, 'Size'), h('span', {}, p.w + ' × ' + p.h)), h('label', { class: 'frow' }, h('span', {}, 'Frame rate'), h('span', {}, p.fps + ' fps')), h('label', { class: 'frow' }, h('span', {}, 'Length'), h('span', {}, this.fmtT(this.total(), true))), this.btn('Project Settings…', () => this.settings()),
         h('p', { class: 'dim vd-tip' }, 'Click a clip to change it. Drag its ends to trim it, drag the middle to move it, and press S to split it at the playhead.'));
-      else out.push(this.btn('Delete', () => this.remove()), this.btn('Duplicate', () => this.duplicate()));
+      else out.push(this.btn('Delete', () => this.remove()), this.btn('Duplicate', () => this.duplicate()), this.btn('Copy', () => this.copy()));
       return this.insp.replaceChildren(h('div', { class: 'panel-h ie-ph' }, h('span', { class: 'pt' }, 'Details')), h('div', { class: 'vd-ibody' }, out));
     }
     const lim = c.max || 0, kindName = { video: 'Video clip', image: 'Picture', title: 'Title', audio: 'Sound clip' }[c.kind];
@@ -468,8 +481,10 @@ const Vid = {
         h('label', { class: 'frow' }, h('span', {}, 'Colour'), h('input', { type: 'color', value: T.color, onchange: e => setT('color', e.target.value) })),
         h('label', { class: 'fcheck' }, h('input', { type: 'checkbox', checked: !!T.bold, onchange: e => setT('bold', e.target.checked) }), 'Bold'), h('label', { class: 'fcheck' }, h('input', { type: 'checkbox', checked: !!T.box, onchange: e => setT('box', e.target.checked) }), 'Dark box behind the words'));
     }
-    out.push(h('div', { class: 'fsec' }, 'Timing'), this.num('Starts at', c.start, v => { c.start = Math.max(0, v); }, { unit: 's' }), this.num('Length', c.dur, v => { c.dur = clamp(v, .1, lim ? lim - c.in : 36000); }, { unit: 's', min: .1 }));
-    if (lim) out.push(this.num('From the file at', c.in, v => { c.in = clamp(v, 0, lim - .1); c.dur = Math.min(c.dur, lim - c.in); }, { unit: 's', adv: true }));
+    const sp = this.rate(c);
+    out.push(h('div', { class: 'fsec' }, 'Timing'), this.num('Starts at', c.start, v => { c.start = Math.max(0, v); }, { unit: 's' }), this.num('Length', c.dur, v => { c.dur = clamp(v, .1, lim ? (lim - c.in) / sp : 36000); }, { unit: 's', min: .1 }));
+    if (c.kind === 'video' || c.kind === 'audio') out.push(this.slide('Speed', sp, 1, 10, .25, v => this.setRate(c, v), { def: 1, tip: 'Play the clip faster, up to 10 times. The clip gets shorter to match.' }));
+    if (lim) out.push(this.num('From the file at', c.in, v => { c.in = clamp(v, 0, lim - .1); c.dur = Math.min(c.dur, (lim - c.in) / sp); }, { unit: 's', adv: true }));
     out.push(h('div', { class: 'fsec' }, 'Fades'), this.slide('Fade in', c.fadeIn || 0, 0, Math.min(10, c.dur), .1, v => { c.fadeIn = v; }), this.slide('Fade out', c.fadeOut || 0, 0, Math.min(10, c.dur), .1, v => { c.fadeOut = v; }),
       c.xfade ? h('div', { class: 'frow' }, h('span', {}, 'Crossfade'), h('span', {}, c.xfade.toFixed(1) + ' s ', h('a', { class: 'vd-link', onclick: () => this.crossfade(c, false) }, 'remove'))) : this.btn('Crossfade with the Clip Before', () => this.crossfade(c, true), 'The clip slides back one second and fades in over the end of the one before it.'));
     if (c.kind === 'audio' || (c.kind === 'video' && c.audio)) out.push(h('div', { class: 'fsec' }, 'Sound'), this.slide('Volume', Math.round((c.vol ?? 1) * 100), 0, 200, 1, v => { c.vol = v / 100; }, { def: 100 }), c.kind === 'video' ? h('label', { class: 'fcheck' }, h('input', { type: 'checkbox', checked: !!c.mute, onchange: e => { this.mark(); c.mute = e.target.checked; this.after(false); this.sync(true); } }), 'Mute this clip') : null);
@@ -477,7 +492,7 @@ const Vid = {
       this.slide('Size', Math.round((c.scale ?? 1) * 100), 10, 300, 1, v => { c.scale = v / 100; }, { def: 100, adv: true, tip: 'Smaller than 100 makes a picture-in-picture over the tracks below.' }),
       this.slide('Left / right', Math.round((c.x || 0) * 100), -100, 100, 1, v => { c.x = v / 100; }, { adv: true }), this.slide('Up / down', Math.round((c.y || 0) * 100), -100, 100, 1, v => { c.y = v / 100; }, { adv: true }));
     if (c.kind !== 'audio') out.push(this.slide('Opacity', Math.round((c.opacity ?? 1) * 100), 0, 100, 1, v => { c.opacity = v / 100; }, { def: 100, adv: true }));
-    out.push(h('div', { class: 'ie-lbtns' }, this.btn('Split Clip', () => this.split()), this.btn('Delete', () => this.remove()), c.kind === 'video' && c.audio && !c.mute ? this.btn('Detach Sound', () => this.detachAudio(), null, 'adv') : null));
+    out.push(h('div', { class: 'ie-lbtns' }, this.btn('Split Clip', () => this.split()), this.btn('Delete', () => this.remove()), this.btn('Copy', () => this.copy(), 'Copy this clip (Ctrl+C); paste it at the playhead with Ctrl+V.'), c.kind === 'video' && c.audio && !c.mute ? this.btn('Detach Sound', () => this.detachAudio(), null, 'adv') : null));
     this.insp.replaceChildren(h('div', { class: 'panel-h ie-ph' }, h('span', { class: 'pt' }, 'Details')), h('div', { class: 'vd-ibody' }, out));
   },
   async settings() {
