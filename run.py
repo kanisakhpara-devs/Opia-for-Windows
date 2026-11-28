@@ -21,6 +21,31 @@ def find_browser():
     return shutil.which('msedge') or shutil.which('chrome') or shutil.which('chromium')
 
 
+def start_menu_shortcut(home):
+    """Put the packaged app in the Start menu so Windows search finds it. Done once per exe location,
+    so a shortcut the user deletes stays deleted until the exe is moved."""
+    if os.name != 'nt' or not getattr(sys, 'frozen', False):
+        return
+    exe, mark = sys.executable, os.path.join(home, '.shortcut')
+    try:
+        with open(mark, encoding='utf-8') as fh:
+            if fh.read() == exe:
+                return
+    except OSError:
+        pass
+    lnk = os.path.join(os.environ.get('APPDATA', ''), r'Microsoft\Windows\Start Menu\Programs\Opia.lnk')
+    ps = ('$s=(New-Object -ComObject WScript.Shell).CreateShortcut($env:OPIA_LNK);$s.TargetPath=$env:OPIA_EXE;'
+          '$s.WorkingDirectory=Split-Path $env:OPIA_EXE;$s.IconLocation=$env:OPIA_EXE+",0";$s.Description="Opia";$s.Save()')
+    try:
+        r = subprocess.run(['powershell', '-NoProfile', '-NonInteractive', '-Command', ps], env=dict(os.environ, OPIA_LNK=lnk, OPIA_EXE=exe),
+                           creationflags=subprocess.CREATE_NO_WINDOW, capture_output=True, timeout=30)
+        if r.returncode == 0 and os.path.exists(lnk):
+            with open(mark, 'w', encoding='utf-8') as fh:
+                fh.write(exe)
+    except Exception:
+        pass        # no shortcut is no reason to stop the app
+
+
 def native_window(url, home):
     """Show the UI in Opia's own window (Windows' built-in WebView2), blocking until it is closed. False if that is not available."""
     try:
@@ -55,6 +80,7 @@ def main():
     url = 'http://127.0.0.1:%d/' % httpd.server_port
     print('Opia is running at', url, flush=True)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    threading.Thread(target=start_menu_shortcut, args=(core.HOME,), daemon=True).start()
 
     try:
         if args.no_window:
